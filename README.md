@@ -49,17 +49,16 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 - User can redeem after the timelock expires, similar to EVM.
 - No timelock validation provided: timelock can be set to an unreasonably large value, risking indefinite fund locks 
 
-✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
-
 # Overview
 
-[ ⭐️ SPONSORS: add info here ]
+Garden is the fastest Bitcoin bridge, enabling cross-chain Bitcoin swaps in as little as 30 seconds. It is built using an intents-based architecture with trustless settlements, ensuring zero custody risk for the users.
 
 ## Links
 
-- **Previous audits:**  [LightChaser Report](https://gist.github.com/ChaseTheLight01/5c433d8291cbed5b02f0ebe92dbc4bdb)  
-[Previous Audits](https://github.com/gardenfi/audits)  
-  - ✅ SCOUTS: If there are multiple report links, please format them in a list.
+- **Previous audits:**  
+  - 2025: [LightChaser Report](https://gist.github.com/ChaseTheLight01/5c433d8291cbed5b02f0ebe92dbc4bdb), [Zellic Report](https://github.com/gardenfi/audits/blob/main/Zellic.pdf)
+  - 2024: [Trail of Bits Report](https://github.com/gardenfi/audits/blob/main/TrailOfBits.pdf)
+  - 2023: [OtterSec Report](https://github.com/gardenfi/audits/blob/main/OtterSec.pdf)
 - **Documentation:** https://docs.garden.finance/
 - **Website:** https://garden.finance/
 - **X/Twitter:** https://x.com/gardenfi
@@ -68,191 +67,171 @@ _Note for C4 wardens: Anything included in this `Automated Findings / Publicly K
 
 # Scope
 
-[ ✅ SCOUTS: add scoping and technical details here ]
-
 ### Files in scope
-- ✅ This should be completed using the `metrics.md` file
-- ✅ Last row of the table should be Total: SLOC
-- ✅ SCOUTS: Have the sponsor review and and confirm in text the details in the section titled "Scoping Q amp; A"
 
-*For sponsors that don't use the scoping tool: list all files in scope in the table below (along with hyperlinks) -- and feel free to add notes to emphasize areas of focus.*
+> Note: The nSLoC counts in the following table have been automatically generated and may differ depending on the definition of what a "significant" line of code represents. As such, they should be considered indicative rather than absolute representations of the lines involved in each contract.
 
-| Contract | SLOC | Purpose | Libraries used |  
-| ----------- | ----------- | ----------- | ----------- |
-| [contracts/folder/sample.sol](https://github.com/code-423n4/repo-name/blob/contracts/folder/sample.sol) | 123 | This contract does XYZ | [`@openzeppelin/*`](https://openzeppelin.com/contracts/) |
+| File   | nSLOC |
+| ------ | ----- |
+|[evm/src/swap/ArbHTLC.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/ArbHTLC.sol)| 144 |
+|[evm/src/swap/ArbNativeHTLC.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/ArbNativeHTLC.sol)| 127 |
+|[evm/src/swap/HTLC.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/HTLC.sol)| 142 |
+|[evm/src/swap/HTLCRegistry.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/HTLCRegistry.sol)| 112 |
+|[evm/src/swap/NativeHTLC.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/NativeHTLC.sol)| 125 |
+|[evm/src/swap/UDA.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/src/swap/UDA.sol)| 71 |
+|[solana/solana-native/programs/solana-native-swaps/src/lib.rs](https://github.com/code-423n4/2025-11-garden/blob/main/solana/solana-native/programs/solana-native-swaps/src/lib.rs)| 260 |
+|[solana/solana-spl-swaps/programs/solana-spl-swaps/src/lib.rs](https://github.com/code-423n4/2025-11-garden/blob/main/solana/solana-spl-swaps/programs/solana-spl-swaps/src/lib.rs)| 378 |
+|[starknet/src/htlc.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/htlc.cairo)| 328 |
+|[starknet/src/interface/events.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/interface/events.cairo)| 27 |
+|[starknet/src/interface/sn_domain.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/interface/sn_domain.cairo)| 23 |
+|[starknet/src/interface/struct_hash.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/interface/struct_hash.cairo)| 87 |
+|[starknet/src/interface.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/interface.cairo)| 60 |
+|[starknet/src/lib.cairo](https://github.com/code-423n4/2025-11-garden/blob/main/starknet/src/lib.cairo)| 2 |
+|[sui/sources/main.move](https://github.com/code-423n4/2025-11-garden/blob/main/sui/sources/main.move)| 277 |
+|**Totals**| **2163** |
 
+
+*For a machine-readable version, see [scope.txt](https://github.com/code-423n4/2025-11-garden/blob/main/scope.txt)*
 ### Files out of scope
-✅ SCOUTS: List files/directories out of scope
+
+> Note: Any file not explicitly listed in the table above is considered out-of-scope, and the list below is indicative
+
+| File         |
+| ------------ |
+| [evm/certora/HTLCHarness.sol](https://github.com/code-423n4/2025-11-garden/blob/main/evm/certora/HTLCHarness.sol) |
+| [evm/script/\*\*.\*\*](https://github.com/code-423n4/2025-11-garden/tree/main/evm/script) |
+| [evm/test/\*\*.\*\*](https://github.com/code-423n4/2025-11-garden/tree/main/evm/test) |
+| [sui/tests/test.move](https://github.com/code-423n4/2025-11-garden/blob/main/sui/tests/test.move) |
+| Totals: 11 |
+
+*For a machine-readable version, see [out_of_scope.txt](https://github.com/code-423n4/2025-11-garden/blob/main/out_of_scope.txt)*
+
 
 # Additional context
 
 ## Areas of concern (where to focus for bugs)
-- Ensure no loss of funds for both parties  
 
-✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+The main focus of wardens should be that there is no way to cuase fund loss for any party involved in a swap.
 
 ## Main invariants
 
-- Duplicate orders should not be possible  
-  - In Solana, duplicate orders are possible only after the first one is completed and closed.  
-- Only owner should be able to change values in `HTLCRegistry`  
+### Order Duplication
 
-✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+Duplicate orders should not be possible in the system except for the Solana implementation, in which duplicate orders are only possible after the original one has been completed and closed.
+
+### Access Control
+
+Only the owner should be able to change the configuration of the `HTLCRegistry`.
 
 ## All trusted roles in the protocol
 
-- In Solana and Sui, ownership of contract allows us to upgrade the contract to the same address  
-- In EVM, `HTLCRegistry` has ownership to set UDA implementation and valid HTLC addresses.   
-
-✅ SCOUTS: Please format the response above 👆 using the template below👇
-
-| Role                                | Description                       |
-| --------------------------------------- | ---------------------------- |
-| Owner                          | Has superpowers                |
-| Administrator                             | Can change fees                       |
-
-✅ SCOUTS: Please format the response above 👆 so its not a wall of text and its readable.
+- In Solana and Sui, ownership of contracts allows us to upgrade the contract to the same address  
+- In EVM, `HTLCRegistry` has ownership to set UDA implementation and valid HTLC addresses
 
 ## Running tests
 
 # Solana  
+
 ## Prerequisites
+
 Install [Anchor framework](https://www.anchor-lang.com/docs/installation)
 
 ## Getting Started
+
 1. Clone the repository.
-`git clone https://github.com/harshasingamshetty1/garden-audit-scope.git`
+```bash
+git clone https://github.com/code-423n4/2025-11-garden.git
+```
 
 2. Change into the Solana contracts directory (SPL or Native).
-`cd garden-audit-scope`
-`cd solana/solana-spl-token`
+```bash
+cd 2025-11-garden/solana/solana-spl-token
+```
 
 3. To build the program:  
-`anchor build`
+```bash
+anchor build
+```
 
 4. To run the tests:  
-`anchor test`  
+```bash
+anchor test
+```
 
 # EVM  
+
 To build the project:
+
 ```bash
-git clone https://github.com/harshasingamshetty1/garden-audit-scope.git
-cd garden-audit-scope
-cd evm
+git clone https://github.com/code-423n4/2025-11-garden.git
+cd 2025-11-garden/evm
 forge install foundry-rs/forge-std
 forge install OpenZeppelin/openzeppelin-contracts-upgradeable@v5.2.0
 forge install OpenZeppelin/openzeppelin-contracts@v5.2.0
 forge build
 ```
 
+Alternatively, the relevant dependencies can be pulled in as submodules.
+
 To test:
-`forge test`
+
+```bash
+forge test
+```
 
 For coverage:
-`forge coverage`
+
+```bash
+forge coverage
+```
 
 # Sui  
+
 To build the project:  
+
 ```bash
-git clone https://github.com/harshasingamshetty1/garden-audit-scope.git
-cd garden-audit-scope
-cd sui
+git clone https://github.com/code-423n4/2025-11-garden.git
+cd 2025-11-garden/sui
 sui move build
 ```
 
 To test:  
-`sui move test`
+
+```bash
+sui move test
+```
 
 For coverage:  
+
 ```bash
 sui move test --coverage
 sui move coverage summary
 ```
 
 # Starknet  
-Prerequisite: `shardlabs/starknet-devnet-rs:0.3.0 `  
+
+Prerequisite: `shardlabs/starknet-devnet-rs:0.3.0` 
+
 To build:  
+
 ```bash
-git clone https://github.com/harshasingamshetty1/garden-audit-scope.git
-cd garden-audit-scope
-cd starknet
+git clone https://github.com/code-423n4/2025-11-garden.git
+cd 2025-11-garden/starknet
 yarn
 scarb build
 ```
 
 To test:  
+
 ```bash
 starknet-devnet
 yarn test
 ```
 
 
-✅ SCOUTS: Please format the response above 👆 using the template below👇
-
-```bash
-git clone https://github.com/code-423n4/2023-08-arbitrum
-git submodule update --init --recursive
-cd governance
-foundryup
-make install
-make build
-make sc-election-test
-```
-To run code coverage
-```bash
-make coverage
-```
-
-✅ SCOUTS: Add a screenshot of your terminal showing the test coverage
-
 ## Miscellaneous
 Employees of Garden and employees' family members are ineligible to participate in this audit.
 
 Code4rena's rules cannot be overridden by the contents of this README. In case of doubt, please check with C4 staff.
 
-
-# Scope
-
-*See [scope.txt](https://github.com/code-423n4/2025-11-garden/blob/main/scope.txt)*
-
-### Files in scope
-
-
-| File   | Logic Contracts | Interfaces | nSLOC | Purpose | Libraries used |
-| ------ | --------------- | ---------- | ----- | -----   | ------------ |
-| /evm/src/swap/ArbHTLC.sol | 1| 1 | 144 | |@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol<br>@openzeppelin/contracts/utils/cryptography/EIP712.sol<br>@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol|
-| /evm/src/swap/ArbNativeHTLC.sol | 1| 1 | 127 | |@openzeppelin/contracts/utils/cryptography/EIP712.sol<br>@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol|
-| /evm/src/swap/HTLC.sol | 1| **** | 142 | |@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol<br>@openzeppelin/contracts/utils/cryptography/EIP712.sol<br>@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol|
-| /evm/src/swap/HTLCRegistry.sol | 1| **** | 112 | |@openzeppelin/contracts/proxy/Clones.sol<br>@openzeppelin/contracts/utils/Address.sol<br>@openzeppelin/contracts/access/Ownable.sol<br>@openzeppelin/contracts/token/ERC20/IERC20.sol|
-| /evm/src/swap/NativeHTLC.sol | 1| **** | 125 | |@openzeppelin/contracts/utils/cryptography/EIP712.sol<br>@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol|
-| /evm/src/swap/UDA.sol | 2| **** | 71 | |@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol<br>@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol<br>@openzeppelin/contracts/proxy/Clones.sol|
-| /solana/solana-native/programs/solana-native-swaps/src/lib.rs | ****| **** | 260 | ||
-| /solana/solana-spl-swaps/programs/solana-spl-swaps/src/lib.rs | ****| **** | 378 | ||
-| /starknet/src/htlc.cairo | ****| **** | 328 | ||
-| /starknet/src/interface/events.cairo | ****| **** | 27 | ||
-| /starknet/src/interface/sn_domain.cairo | ****| **** | 23 | ||
-| /starknet/src/interface/struct_hash.cairo | ****| **** | 87 | ||
-| /starknet/src/interface.cairo | ****| **** | 60 | ||
-| /starknet/src/lib.cairo | ****| **** | 2 | ||
-| /sui/sources/main.move | ****| **** | 277 | ||
-| **Totals** | **7** | **2** | **2163** | | |
-
-### Files out of scope
-
-*See [out_of_scope.txt](https://github.com/code-423n4/2025-11-garden/blob/main/out_of_scope.txt)*
-
-| File         |
-| ------------ |
-| ./evm/certora/HTLCHarness.sol |
-| ./evm/script/DeployArbHTLC.s.sol |
-| ./evm/script/DeployArbNativeHTLC.s.sol |
-| ./evm/script/DeployNativeHTLC.s.sol |
-| ./evm/script/DeployRegistry.s.sol |
-| ./evm/script/deployHTLC.s.sol |
-| ./evm/test/HTLC.t.sol |
-| ./evm/test/HTLCRegistry.t.sol |
-| ./evm/test/MockSmartAccount.sol |
-| ./evm/test/NativeHTLC.t.sol |
-| ./sui/tests/test.move |
-| Totals: 11 |
 
