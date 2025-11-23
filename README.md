@@ -132,13 +132,13 @@ Only the owner should be able to change the configuration of the `HTLCRegistry`.
 
 ## Running tests
 
-# Solana  
+### Solana  
 
-## Prerequisites
+**Prerequisites**
 
 Install [Anchor framework](https://www.anchor-lang.com/docs/installation)
 
-## Getting Started
+**Getting Started**
 
 1. Clone the repository.
 ```bash
@@ -160,7 +160,7 @@ anchor build
 anchor test
 ```
 
-# EVM  
+### EVM  
 
 To build the project:
 
@@ -187,7 +187,7 @@ For coverage:
 forge coverage
 ```
 
-# Sui  
+### Sui  
 
 To build the project:  
 
@@ -210,7 +210,7 @@ sui move test --coverage
 sui move coverage summary
 ```
 
-# Starknet  
+### Starknet  
 
 Prerequisite: `shardlabs/starknet-devnet-rs:0.3.0` 
 
