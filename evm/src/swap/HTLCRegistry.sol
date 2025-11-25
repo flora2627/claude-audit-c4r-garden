@@ -160,6 +160,9 @@ contract HTLCRegistry is Ownable {
     /**
      * @dev     calculate the counterfactual address of this account as it would be returned by createAccount()
      * @notice  this address must be used to deposit the funds into, before calling the createERC20SwapAddress() function
+     * @notice  CRITICAL: This address depends on the current `implUDA`. If `implUDA` changes between
+     *          calling this and calling `createERC20SwapAddress`, the predicted address will change,
+     *          leaving funds stuck at the old predicted address.
      * @param   htlc            The HTLC being used in the swap
      * @param   refundAddress   Address to recover accidental funds sent to the UDA
      * @param   redeemer        Redeemer's address to be used for the swap
@@ -235,6 +238,9 @@ contract HTLCRegistry is Ownable {
     /**
      * @dev     calculate the counterfactual address of this account as it would be returned by createAccount()
      * @notice  this address must be used to deposit the funds into, before calling the createNativeSwapAddress() function
+     * @notice  CRITICAL: This address depends on the current `implNativeUDA`. If `implNativeUDA` changes between
+     *          calling this and calling `createNativeSwapAddress`, the predicted address will change,
+     *          leaving funds stuck at the old predicted address.
      * @param   refundAddress   Address to recover accidental funds sent to the UDA
      * @param   redeemer        Redeemer's address to be used for the swap
      * @param   timelock        The timelock to be used for the swap

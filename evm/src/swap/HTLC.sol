@@ -116,6 +116,7 @@ contract HTLC is EIP712 {
      * @dev     Secret used to generate secret hash for initiation should be generated randomly
      *          and sha256 hash should be used to support hashing methods on other non-evm chains.
      *          Signers cannot generate orders with same secret hash or override an existing order.
+     *          NOTE: This contract does not support fee-on-transfer or rebasing tokens.
      * @param   redeemer  public address of the redeemer
      * @param   timelock  timelock in blocks for the htlc order
      * @param   amount  amount of tokens to trade
@@ -134,6 +135,7 @@ contract HTLC is EIP712 {
      * @dev     Secret used to generate secret hash for initiation should be generated randomly
      *          and sha256 hash should be used to support hashing methods on other non-evm chains.
      *          Signers cannot generate orders with same secret hash or override an existing order.
+     *          NOTE: This contract does not support fee-on-transfer or rebasing tokens.
      * @param   redeemer  public address of the redeemer
      * @param   timelock  timelock in blocks for the htlc order
      * @param   amount  amount of tokens to trade
@@ -271,6 +273,8 @@ contract HTLC is EIP712 {
         require(timelock > 0, HTLC__OrderNotInitiated());
 
         require(order.fulfilledAt == 0, HTLC__OrderFulfilled());
+        // NOTE: Strict inequality '<' means refund is available at block (initiatedAt + timelock + 1).
+        // This is intentional "after N blocks" semantics.
         require(order.initiatedAt + timelock < block.number, HTLC__OrderNotExpired());
 
         order.fulfilledAt = block.number;
@@ -302,6 +306,9 @@ contract HTLC is EIP712 {
         uint256 amount_,
         bytes32 secretHash_
     ) internal returns (bytes32 orderID) {
+        // NOTE: OrderID does NOT include 'funder_', only 'initiator_'.
+        // This allows relayers to fund orders on behalf of users without changing the OrderID.
+        // It prevents duplicate orders with same parameters, even if funders differ.
         orderID =
             sha256(abi.encode(block.chainid, secretHash_, initiator_, redeemer_, timelock_, amount_, address(this)));
 

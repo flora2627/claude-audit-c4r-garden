@@ -216,6 +216,8 @@ contract NativeHTLC is EIP712 {
 
         emit Redeemed(orderID, secretHash, secret);
 
+        // NOTE: .transfer() uses 2300 gas stipend. This is safe against reentrancy but may fail 
+        // for some smart contract wallets. This is an intentional design choice favoring security.
         orderRedeemer.transfer(amount);
     }
 
@@ -233,6 +235,7 @@ contract NativeHTLC is EIP712 {
         require(timelock > 0, NativeHTLC__OrderNotInitiated());
 
         require(order.fulfilledAt == 0, NativeHTLC__OrderFulfilled());
+        // NOTE: Strict inequality '<' means refund is available at block (initiatedAt + timelock + 1).
         require(order.initiatedAt + timelock < block.number, NativeHTLC__OrderNotExpired());
 
         order.fulfilledAt = block.number;
@@ -258,6 +261,7 @@ contract NativeHTLC is EIP712 {
         internal
         returns (bytes32 orderID)
     {
+        // NOTE: OrderID excludes msg.sender (funder). Initiator controls the order.
         orderID =
             sha256(abi.encode(block.chainid, secretHash_, initiator_, redeemer_, timelock_, msg.value, address(this)));
 

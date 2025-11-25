@@ -56,6 +56,7 @@ contract UniqueDepositAddress is Initializable {
     /**
      * @notice  Allows the owner to recover any tokens accidentally sent to this contract
      * @dev     Always sends the funds to the owner (refundAddress) of the contract
+     *          NOTE: Publicly callable by anyone. This is intentional/safe because destination is hardcoded.
      * @param   _token  The ERC20 token to recover
      */
     function recover(address _token) public {
@@ -66,6 +67,7 @@ contract UniqueDepositAddress is Initializable {
     /**
      * @notice  Allows the owner to recover any eth accidentally sent to this contract
      * @dev     Always sends the funds to the owner (refundAddress) of the contract
+     *          NOTE: Publicly callable by anyone. This is intentional/safe because destination is hardcoded.
      */
     function recover() public {
         (, address _refundAddress,,,,,) = getArgs();
@@ -122,6 +124,7 @@ contract NativeUniqueDepositAddress is Initializable {
     /**
      * @notice  Allows the owner to recover any tokens accidentally sent to this contract
      * @dev     Always sends the funds to the owner (refundAddress) of the contract
+     *          NOTE: Publicly callable by anyone. This is intentional/safe because destination is hardcoded.
      * @param   _token  The ERC20 token to recover
      */
     function recover(address _token) public {
@@ -132,6 +135,7 @@ contract NativeUniqueDepositAddress is Initializable {
     /**
      * @notice  Allows the owner to recover any eth accidentally sent to this contract
      * @dev     Always sends the funds to the owner (refundAddress) of the contract
+     *          NOTE: Publicly callable by anyone. This is intentional/safe because destination is hardcoded.
      */
     function recover() public {
         (, address _refundAddress,,,,,) = getArgs();
