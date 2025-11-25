@@ -1,15 +1,329 @@
 ./evm/src/swap/ArbHTLC.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initialise()
+    #   - initiate()
+    #   - initiateOnBehalf()
+    #   - initiateWithSignature()
+    #   - redeem()
+    #   - refund()
+    #   - instantRefund()
+    #   - instantRefundDigest()
+
+    # [Privileged]
+    #   - instantRefund(): requires msg.sender == order.redeemer OR valid signature from order.redeemer
+
+    # [Business Logic]
+    #   - instantRefundDigest()
+
+    # [Financial Flow]
+    #   - initiate(): transfers tokens from user to contract
+    #   - initiateOnBehalf(): transfers tokens from user to contract
+    #   - initiateWithSignature(): transfers tokens from user to contract
+    #   - redeem(): transfers tokens from contract to redeemer
+    #   - refund(): transfers tokens from contract to initiator
+    #   - instantRefund(): transfers tokens from contract to initiator
 ./evm/src/swap/ArbNativeHTLC.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initiate()
+    #   - initiateOnBehalf()
+    #   - redeem()
+    #   - refund()
+    #   - instantRefund()
+    #   - instantRefundDigest()
+
+    # [Privileged]
+    #   - instantRefund(): requires msg.sender == order.redeemer OR valid signature from order.redeemer
+
+    # [Business Logic]
+    #   - instantRefundDigest()
+
+    # [Financial Flow]
+    #   - initiate(): receives native token (msg.value)
+    #   - initiateOnBehalf(): receives native token (msg.value)
+    #   - redeem(): transfers native token to redeemer
+    #   - refund(): transfers native token to initiator
+    #   - instantRefund(): transfers native token to initiator
 ./evm/src/swap/HTLC.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initialise()
+    #   - initiate()
+    #   - initiateOnBehalf()
+    #   - initiateWithSignature()
+    #   - redeem()
+    #   - refund()
+    #   - instantRefund()
+    #   - instantRefundDigest()
+
+    # [Privileged]
+    #   - instantRefund(): requires msg.sender == order.redeemer OR valid signature from order.redeemer
+
+    # [Business Logic]
+    #   - instantRefundDigest()
+
+    # [Financial Flow]
+    #   - initiate(): transfers tokens from user to contract
+    #   - initiateOnBehalf(): transfers tokens from user to contract
+    #   - initiateWithSignature(): transfers tokens from user to contract
+    #   - redeem(): transfers tokens from contract to redeemer
+    #   - refund(): transfers tokens from contract to initiator
+    #   - instantRefund(): transfers tokens from contract to initiator
 ./evm/src/swap/HTLCRegistry.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - createERC20SwapAddress()
+    #   - getERC20Address()
+    #   - createNativeSwapAddress()
+    #   - getNativeAddress()
+
+    # [Privileged]
+    #   - setImplNativeUDA(): requires onlyOwner
+    #   - setImplUDA(): requires onlyOwner
+    #   - addHTLC(): requires onlyOwner
+
+    # [Business Logic]
+    #   - getERC20Address()
+    #   - getNativeAddress()
+
+    # [Financial Flow]
+    #   - createERC20SwapAddress(): deploys UDA which transfers tokens
+    #   - createNativeSwapAddress(): deploys NativeUDA which transfers native tokens
 ./evm/src/swap/NativeHTLC.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initiate()
+    #   - initiateOnBehalf()
+    #   - redeem()
+    #   - refund()
+    #   - instantRefund()
+    #   - instantRefundDigest()
+
+    # [Privileged]
+    #   - instantRefund(): requires msg.sender == order.redeemer OR valid signature from order.redeemer
+
+    # [Business Logic]
+    #   - instantRefundDigest()
+
+    # [Financial Flow]
+    #   - initiate(): receives native token (msg.value)
+    #   - initiateOnBehalf(): receives native token (msg.value)
+    #   - redeem(): transfers native token to redeemer
+    #   - refund(): transfers native token to initiator
+    #   - instantRefund(): transfers native token to initiator
 ./evm/src/swap/UDA.sol
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initialize()
+    #   - recover()
+
+    # [Privileged]
+    #   - initialize(): requires uninitialized
+
+    # [Business Logic]
+    #   - getArgs()
+
+    # [Financial Flow]
+    #   - initialize(): approves and initiates swap (transfers tokens)
+    #   - recover(): transfers tokens/ETH to refundAddress
 ./solana/solana-native/programs/solana-native-swaps/src/lib.rs
+    # [File Type]
+    #   - Program (Anchor)
+
+    # [User Entry]
+    #   - initiate()
+    #   - redeem()
+    #   - refund()
+    #   - instant_refund()
+
+    # [Privileged]
+    #   - instant_refund(): requires redeemer signature (Signer<'info>)
+
+    # [Business Logic]
+    #   - SwapAccount struct
+    #   - Initiate struct
+    #   - Redeem struct
+    #   - Refund struct
+    #   - InstantRefund struct
+
+    # [Financial Flow]
+    #   - initiate(): transfers SOL from funder to swap_account
+    #   - redeem(): transfers SOL from swap_account to redeemer
+    #   - refund(): transfers SOL from swap_account to refundee
+    #   - instant_refund(): transfers SOL from swap_account to refundee
 ./solana/solana-spl-swaps/programs/solana-spl-swaps/src/lib.rs
+    # [File Type]
+    #   - Program (Anchor)
+
+    # [User Entry]
+    #   - initiate()
+    #   - redeem()
+    #   - refund()
+    #   - instant_refund()
+
+    # [Privileged]
+    #   - instant_refund(): requires redeemer signature (Signer<'info>)
+
+    # [Business Logic]
+    #   - SwapAccount struct
+    #   - Initiate struct
+    #   - Redeem struct
+    #   - Refund struct
+    #   - InstantRefund struct
+
+    # [Financial Flow]
+    #   - initiate(): transfers tokens from funder to token_vault
+    #   - redeem(): transfers tokens from token_vault to redeemer
+    #   - refund(): transfers tokens from token_vault to refundee
+    #   - instant_refund(): transfers tokens from token_vault to refundee
 ./starknet/src/htlc.cairo
+    # [File Type]
+    #   - Contract
+
+    # [User Entry]
+    #   - initiate()
+    #   - initiate_with_destination_data()
+    #   - initiate_on_behalf()
+    #   - initiate_on_behalf_with_destination_data()
+    #   - initiate_with_signature()
+    #   - redeem()
+    #   - refund()
+    #   - instant_refund()
+
+    # [Privileged]
+    #   - initiate_with_signature(): requires valid signature from initiator
+    #   - instant_refund(): requires caller == redeemer OR valid signature from redeemer
+
+    # [Business Logic]
+    #   - _initiate()
+    #   - generate_order_id()
+    #   - safe_params()
+
+    # [Financial Flow]
+    #   - initiate*(): transfers tokens from user to contract
+    #   - redeem(): transfers tokens from contract to redeemer
+    #   - refund(): transfers tokens from contract to initiator
+    #   - instant_refund(): transfers tokens from contract to initiator
 ./starknet/src/interface/events.cairo
+    # [File Type]
+    #   - Interface/Events
+
+    # [User Entry]
+    #   - None
+
+    # [Privileged]
+    #   - None
+
+    # [Business Logic]
+    #   - Initiated struct
+    #   - InitiatedWithDestinationData struct
+    #   - Redeemed struct
+    #   - Refunded struct
+
+    # [Financial Flow]
+    #   - None
 ./starknet/src/interface/sn_domain.cairo
+    # [File Type]
+    #   - Library/Struct
+
+    # [User Entry]
+    #   - None
+
+    # [Privileged]
+    #   - None
+
+    # [Business Logic]
+    #   - StarknetDomain struct
+    #   - get_struct_hash()
+
+    # [Financial Flow]
+    #   - None
 ./starknet/src/interface/struct_hash.cairo
+    # [File Type]
+    #   - Library/Struct
+
+    # [User Entry]
+    #   - None
+
+    # [Privileged]
+    #   - None
+
+    # [Business Logic]
+    #   - Initiate struct
+    #   - instantRefund struct
+    #   - get_message_hash()
+    #   - get_struct_hash()
+
+    # [Financial Flow]
+    #   - None
 ./starknet/src/interface.cairo
+    # [File Type]
+    #   - Interface
+
+    # [User Entry]
+    #   - None
+
+    # [Privileged]
+    #   - None
+
+    # [Business Logic]
+    #   - IHTLC trait
+    #   - IMessageHash trait
+    #   - IStructHash trait
+
+    # [Financial Flow]
+    #   - None
 ./starknet/src/lib.cairo
+    # [File Type]
+    #   - Library/Module
+
+    # [User Entry]
+    #   - None
+
+    # [Privileged]
+    #   - None
+
+    # [Business Logic]
+    #   - Module definitions
+
+    # [Financial Flow]
+    #   - None
 ./sui/sources/main.move
+    # [File Type]
+    #   - Module
+
+    # [User Entry]
+    #   - create_orders_registry()
+    #   - initiate()
+    #   - refund()
+    #   - redeem()
+    #   - instant_refund()
+    #   - instant_refund_digest()
+
+    # [Privileged]
+    #   - instant_refund(): requires tx_context::sender(ctx) == order.redeemer
+
+    # [Business Logic]
+    #   - Order struct
+    #   - OrdersRegistry struct
+    #   - create_order_id()
+    #   - safe_params()
+
+    # [Financial Flow]
+    #   - initiate(): transfers coins from funder to OrdersRegistry
+    #   - refund(): transfers coins from OrdersRegistry to initiator
+    #   - redeem(): transfers coins from OrdersRegistry to redeemer
+    #   - instant_refund(): transfers coins from OrdersRegistry to initiator
