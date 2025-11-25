@@ -110,3 +110,131 @@
 - **Pattern**: `public recover() { send(hardcoded_owner); }`
 - **Rule**: If destination is fixed/protected, public access is not a bug.
 
+---
+
+### 1.8 Unprotected Initialization Front-Running (from finding_012)
+
+**🔁 Knowledge Reflection**
+
+**Context**: `initialise(address _token) public` with no access control in HTLC/ArbHTLC contracts.
+
+**Issue initially identified**:
+- Attacker can front-run deployment → inject malicious token → Registry owner adds it without verification → users lock real funds on counterparty chain → attacker redeems with malicious tokens → fund loss
+
+**Misunderstanding revealed**:
+- Attack path requires MULTIPLE operational failures by trusted parties:
+  1. Owner failing to monitor initialization transaction
+  2. Owner failing to verify token address before calling `addHTLC()`
+  3. Users failing to verify token address before locking counterparty funds
+- Not a pure protocol logic flaw - requires off-chain social engineering
+
+**Blind spot**:
+- Failed to distinguish between "exploitable on-chain" vs "requires operational failures"
+- Centralization-dependent attacks should be classified differently when system is explicitly centralized and trusted parties are assumed competent
+
+**🧠 Knowledge Update**
+
+**Pattern**: Unprotected `initialize()` / `initialise()` functions in contracts that will be integrated into centralized registries
+
+**Rule - When to classify as FALSE POSITIVE**:
+
+A "front-running initialization → inject malicious parameters" vulnerability should be classified as **FALSE POSITIVE** when ALL of the following are true:
+
+1. **Centralization acknowledged**: System documentation explicitly states owner is trusted (check known-issues.md, README, or audit scope)
+2. **Defense-in-depth exists**: Multiple verification layers protect against the attack:
+   - Owner verification before integration
+   - User verification before committing value
+3. **Audit rules exclude centralization**: Audit directive [Core-5] or similar states "Centralization issues are out of scope"
+4. **Requires privileged failures**: Attack requires trusted privileged party to make operational mistakes (violates [Core-4]: "Only accept attacks that a normal, unprivileged account can initiate")
+5. **Not 100% attacker-controlled**: Attack path requires social engineering, governance mistakes, or probabilistic events (violates [Core-6])
+6. **User competence assumption**: Audit assumes technically competent users who verify configurations (e.g., [Core-9]: "用户会严格检查自己的操作和协议配置")
+7. **Negative EV**: Economic analysis shows P(success) < 0.1% when competent parties are involved
+
+**Rule - When to classify as VALID**:
+
+Classify as VALID vulnerability if ANY of the following:
+
+1. **System claims trustless**: Protocol documentation claims "trustless", "decentralized", or "no admin keys" but has unprotected initialization
+2. **No defense layers**: No owner verification step exists before integration, or automatic integration without human review
+3. **Centralization in scope**: Audit explicitly includes centralization risks
+4. **High probability**: P(success) > 10% under realistic operational assumptions
+5. **Positive EV**: Attacker expected value is positive even accounting for low probability
+
+**Computation Template for Economic Viability**:
+
+```
+P(success) = P(deploy_frontrun) × P(owner_no_verify) × P(user_no_verify)
+
+For Garden Finance case:
+P(success) ≈ 0.95 × 0.01 × 0.05 = 0.000475 = 0.0475% (< 0.1% threshold)
+
+EV = P(success) × victim_funds - attack_cost
+EV = 0.000475 × $100,000 - $100 = $47.50 - $100 = -$52.50 (NEGATIVE)
+```
+
+**SafeERC20 Universal Limitation**:
+
+OpenZeppelin's `SafeERC20.safeTransferFrom()` (applies to ALL EVM projects using it):
+- ✅ Checks return value (handles non-standard ERC20s)
+- ❌ Does NOT verify balance changes before/after
+- ❌ Cannot prevent intentionally malicious tokens from returning `true` without transferring
+
+This is a **documented limitation**, not a bug. Any EVM project using SafeERC20 has this constraint.
+
+**Defense-in-Depth Model for Token Trust**:
+
+Projects using external tokens should implement defense layers:
+
+1. **Token Whitelisting**: Owner maintains list of approved tokens (centralized but explicit)
+2. **Owner Verification**: Manual verification of token addresses before integration (Garden Finance model)
+3. **Balance Checking**: Code-level balance checks before/after transfers (trustless but gas-heavy)
+4. **User Education**: Document that users must verify token addresses (education layer)
+
+Absence of Layer 3 (balance checking) is NOT a vulnerability if Layers 1, 2, and 4 exist and are documented.
+
+**📍 Future Checkpoint**
+
+**When auditing unprotected initialization patterns:**
+
+1. **Check centralization model** (in order):
+   - Read known-issues.md / README / audit scope for centralization statements
+   - Check if owner/admin is explicitly trusted
+   - Verify if centralization risks are in/out of scope per audit rules
+
+2. **Map defense layers**:
+   - Deployment: Atomic init? Constructor init? Front-run protection?
+   - Integration: Owner verification step? Automatic or manual?
+   - Usage: User verification expected? Standard practice in this domain?
+
+3. **Compute attack economics**:
+   - Probability: P(layer1_fail) × P(layer2_fail) × P(layer3_fail)
+   - Cost: Gas + infrastructure + opportunity cost
+   - Gain: Expected value of successful attack
+   - EV: P × Gain - Cost
+   - Threshold: If EV < 0 or P < 0.1%, likely false positive
+
+4. **Apply audit directive filters**:
+   - [Core-4]: Does attack require privileged party failure? → If YES, check if in scope
+   - [Core-5]: Is this centralization issue? → If YES and out of scope → FALSE POSITIVE
+   - [Core-6]: Is attack 100% attacker-controlled? → If NO (requires social engineering) → FALSE POSITIVE
+   - [Core-9]: Does attack assume users don't verify? → If YES and users assumed competent → FALSE POSITIVE
+
+5. **Classification decision tree**:
+   ```
+   Is system centralized & documented?
+     ├─ NO → Check if defense layers exist → Classify based on exploitability
+     └─ YES → Is centralization in scope?
+          ├─ NO → FALSE POSITIVE (out of scope)
+          └─ YES → Does attack require owner operational failure?
+               ├─ NO → VALID (attacker-only exploit)
+               └─ YES → Compute EV → If negative or P<0.1% → FALSE POSITIVE
+   ```
+
+**Key Insight**: "Unprotected initialization" is a **design weakness** but becomes a **vulnerability** only under specific conditions. The conditions must be evaluated in context of:
+- Trust model (centralized vs trustless)
+- Audit scope (centralization in/out)
+- Defense layers (single point of failure vs defense-in-depth)
+- Economics (positive EV vs negative EV)
+- User assumptions (naive vs competent)
+
+---

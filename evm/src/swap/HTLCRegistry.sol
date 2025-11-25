@@ -106,6 +106,9 @@ contract HTLCRegistry is Ownable {
      * @param   _htlc   The htlc address to be added to the registry
      */
     function addHTLC(address _htlc) external onlyOwner validContractAddress(_htlc) {
+        // AUDIT: Owner MUST verify token address before calling this. HTLC.initialise() has no access control,
+        // so token could be malicious if HTLC was front-run during deployment. This is a trust assumption -
+        // owner is responsible for verifying HTLC.token() returns the expected address before adding to registry.
         address token = address(HTLC(_htlc).token());
         htlcs[token] = _htlc;
         emit HTLCAdded(_htlc, token);
@@ -146,6 +149,8 @@ contract HTLCRegistry is Ownable {
 
         // getting the ERC20SwapAddress
         address addr = _implUDA.predictDeterministicAddressWithImmutableArgs(encodedArgs, salt);
+        // AUDIT: balanceOf check assumes token is honest. Malicious token can return fake balance.
+        // Protection: owner must verify token in addHTLC(), users must verify token before locking counterparty funds.
         require(IERC20(HTLC(htlc).token()).balanceOf(addr) >= amount, HTLCRegistry__InsufficientFundsDeposited());
 
         if (addr.code.length == 0) {

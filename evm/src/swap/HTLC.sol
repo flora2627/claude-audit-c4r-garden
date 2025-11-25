@@ -104,6 +104,9 @@ contract HTLC is EIP712 {
     constructor() EIP712(name, version) {}
 
     function initialise(address _token) public {
+        // AUDIT: No access control - callable by anyone. Single-use only (isInitialized flag).
+        // Front-running risk exists but requires HTLCRegistry owner to fail verification before addHTLC().
+        // System assumes centralized owner will verify token address - NOT a vulnerability under trust model.
         require(isInitialized == 0, HTLC__HTLCAlreadyInitialized());
         token = IERC20(_token);
         unchecked {
@@ -325,6 +328,9 @@ contract HTLC is EIP712 {
 
         emit Initiated(orderID, secretHash_, amount_);
 
+        // AUDIT: SafeERC20 only checks return value, NOT balance changes. Malicious token can return true without transfer.
+        // Invariant: token.balanceOf(this) >= sum(active orders.amount) holds ONLY if token is honest.
+        // Protection: HTLCRegistry owner verification + user verification before counterparty lock.
         token.safeTransferFrom(funder_, address(this), amount_);
     }
 
